@@ -52,7 +52,7 @@
                         <label class="mb-3">Face Image</label>
                         <div class="row align-items-center">
                             <div class="col-md-6 mb-3 mb-md-0">
-                                <button type="button" class="btn btn-outline-secondary btn-block mb-3" id="openCameraBtn">
+                                <button type="button" class="btn btn-outline-primary btn-block mb-3" id="openCameraBtn">
                                     <i class="fas fa-camera mr-2"></i> Capture with Camera
                                 </button>
                                 <div class="custom-file">
@@ -97,9 +97,9 @@
 <div class="modal fade" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="cameraModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="cameraModalLabel"><i class="fas fa-camera-retro mr-2"></i> Capture Photo</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -108,15 +108,20 @@
                     <label for="camera-select">Select Camera:</label>
                     <select id="camera-select" class="form-control"></select>
                 </div>
-                <video id="video" width="100%" height="auto" autoplay playsinline style="border-radius: 8px; background-color: #000;"></video>
+                <div class="video-container mb-3">
+                    <video id="video" width="100%" height="auto" autoplay playsinline style="border-radius: 8px; background-color: #000;"></video>
+                </div>
                 <canvas id="canvas" style="display:none;"></canvas>
                 <div id="camera-error" class="alert alert-danger mt-3" style="display: none;">
                     <strong>Error:</strong> <span id="error-message"></span>
                 </div>
+                <div class="camera-instructions mt-2">
+                    <p class="text-muted"><i class="fas fa-info-circle mr-1"></i> Position face in the frame and click Snap Photo</p>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" id="snap" class="btn btn-primary"><i class="fas fa-camera"></i> Snap Photo</button>
+                <button type="button" id="snap" class="btn btn-primary"><i class="fas fa-camera mr-2"></i> Snap Photo</button>
             </div>
         </div>
     </div>
@@ -175,7 +180,61 @@
     #video {
         max-width: 100%;
         height: auto;
-        max-height: 70vh;
+        max-height: 60vh;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+    }
+    
+    .video-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+    
+    /* Camera button styling */
+    #openCameraBtn {
+        background-color: #fff;
+        border: 1px solid #667eea;
+        color: #667eea;
+    }
+    
+    #openCameraBtn:hover {
+        background-color: #667eea;
+        color: #fff;
+    }
+    
+    /* Preview styling */
+    #preview {
+        max-height: 180px;
+        border-radius: 8px;
+        border: 2px solid #667eea;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    #preview-placeholder {
+        padding: 20px;
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+    }
+    
+    #preview-placeholder i {
+        font-size: 2rem;
+        color: #6c757d;
+    }
+    
+    /* Modal styling */
+    .modal-header {
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .modal-footer {
+        border-top: 1px solid #dee2e6;
+    }
+    
+    /* Error message styling */
+    #camera-error {
+        border-radius: 5px;
     }
 </style>
 <script>
