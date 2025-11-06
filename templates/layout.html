@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -30,9 +29,12 @@
                             <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </li>
                     {% else %}
+                        <!-- Only show login button if not on student pages -->
+                        {% if request.endpoint != 'student_login' and request.endpoint != 'student_attendance' %}
                         <li class="nav-item {% if request.endpoint == 'login' %}active{% endif %}">
                             <a class="nav-link" href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
                         </li>
+                        {% endif %}
                     {% endif %}
                 </ul>
             </div>
@@ -68,5 +70,25 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
 
     {% block scripts %}{% endblock %}
+    
+    <script>
+    // Check if we're on a student page and modify the navbar brand behavior
+    document.addEventListener('DOMContentLoaded', function() {
+        // List of student-related endpoints
+        var studentEndpoints = ['student_login', 'student_attendance'];
+        var currentEndpoint = '{{ request.endpoint }}';
+        
+        if (studentEndpoints.includes(currentEndpoint)) {
+            var brandLink = document.querySelector('.navbar-brand');
+            if (brandLink) {
+                brandLink.href = 'javascript:void(0)';
+                brandLink.onclick = function(e) {
+                    e.preventDefault();
+                    window.location.reload();
+                };
+            }
+        }
+    });
+    </script>
 </body>
 </html>

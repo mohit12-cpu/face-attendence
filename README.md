@@ -2,13 +2,15 @@
 
 CognAttendance is a student attendance management system that uses facial recognition technology to track and record student attendance. Built with Python, Flask, and OpenCV, this system provides an efficient and automated way to manage student attendance using facial biometrics.
 
+The system offers both a web-based interface and a desktop application for flexible deployment options.
+
 ## Features
 
 - **Facial Recognition**: Automatically identify students using face recognition technology
 - **Multi-User System**: Separate interfaces for administrators and students
 - **Real-time Attendance**: Capture and record attendance in real-time
 - **Database Flexibility**: Supports SQLite (default), MySQL, and PostgreSQL
-- **Web-based Interface**: Responsive web interface built with Flask and Bootstrap
+- **Dual Interface**: Both web-based and desktop applications available
 - **Data Export**: Export attendance records to CSV format
 - **Student Management**: Add, edit, and remove student records
 - **Attendance Dashboard**: Visual dashboard with statistics and recent records
@@ -17,8 +19,8 @@ CognAttendance is a student attendance management system that uses facial recogn
 ## Technology Stack
 
 - **Backend**: Python, Flask
-- **Frontend**: HTML, CSS, JavaScript, Bootstrap
-- **Database**: SQLite/MySQL/PostgreSQL with SQLAlchemy
+- **Frontend**: HTML, CSS, JavaScript, Bootstrap (Web); Tkinter (Desktop)
+- **Database**: SQLite/MySQL/PostgreSQL with custom database abstraction layer
 - **Face Recognition**: OpenCV, face_recognition library
 - **Image Processing**: Pillow
 - **Production Server**: Waitress
@@ -76,18 +78,34 @@ python setup_database.py
 
 ## Usage
 
-### Development Mode
+### Desktop Application (Recommended for Face Recognition)
 
-To run the application in development mode:
+To run the desktop application:
+```bash
+python main.py
+```
+
+The desktop application provides:
+- Student management (add, edit, delete)
+- Attendance tracking via webcam
+- Real-time face recognition
+- Data visualization
+- Export functionality
+
+### Web Application
+
+#### Development Mode
+
+To run the web application in development mode:
 ```bash
 python app.py
 ```
 
 The application will be accessible at `http://127.0.0.1:5000`
 
-### Production Mode
+#### Production Mode
 
-To run the application in production mode:
+To run the web application in production mode:
 ```bash
 python run_production.py
 ```
@@ -128,14 +146,17 @@ Login at: `/student/login`
 
 ```
 face-attendance-system/
-├── app.py                 # Main Flask application
+├── app.py                 # Main Flask web application
+├── main.py                # Main desktop application entry point
+├── student_attendance_ui.py # Desktop application UI implementation
 ├── database.py            # SQLite database implementation
 ├── database_sql.py        # Multi-database implementation
 ├── db_config.py           # Database configuration
 ├── run_production.py      # Production server setup
 ├── setup_database.py      # Database setup script
+├── migrate_to_db.py       # Data migration script
 ├── requirements.txt       # Python dependencies
-├── templates/             # HTML templates
+├── templates/             # HTML templates for web interface
 ├── static/                # CSS and static assets
 ├── known_faces/           # Student face images
 └── attendance.db          # Default SQLite database
@@ -201,13 +222,6 @@ Use the migration script to transfer data between database types:
 python migrate_to_db.py
 ```
 
-## Testing Database Connection
-
-Test your database configuration:
-```bash
-python test_db_connection.py
-```
-
 ## Security Features
 
 - CAPTCHA protection on login forms
@@ -239,5 +253,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Face recognition powered by the `face_recognition` library
 - Web framework provided by Flask
-- Database abstraction with SQLAlchemy
+- Desktop GUI built with Tkinter
 - Production server using Waitress

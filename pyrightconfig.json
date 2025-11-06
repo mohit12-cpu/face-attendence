@@ -1,0 +1,16 @@
+{
+  "pythonVersion": "3.14",
+  "venvPath": ".",
+  "venv": ".",
+  "pythonPlatform": "Windows",
+  "executionEnvironments": [
+    {
+      "root": ".",
+      "pythonVersion": "3.14",
+      "extraPaths": [
+        "C:\\Python314\\Lib\\site-packages",
+        "C:\\Users\\mohit\\AppData\\Roaming\\Python\\Python314\\site-packages"
+      ]
+    }
+  ]
+}

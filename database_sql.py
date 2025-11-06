@@ -14,7 +14,7 @@ MYSQL_AVAILABLE = False
 POSTGRESQL_AVAILABLE = False
 
 try:
-    import mysql.connector
+    import mysql.connector  # type: ignore
     MYSQL_AVAILABLE = True
 except ImportError:
     mysql = None
@@ -52,7 +52,7 @@ def get_db_connection():
     if DB_TYPE == 'mysql':
         if not MYSQL_AVAILABLE:
             raise ImportError("MySQL driver not available. Please install mysql-connector-python")
-        import mysql.connector
+        import mysql.connector  # type: ignore
         connection = mysql.connector.connect(
             host=DB_HOST,
             port=DB_PORT,
@@ -202,7 +202,12 @@ def get_all_students():
             # Convert row to dictionary using column indices
             row_dict = {}
             for i, column in enumerate(columns):
-                row_dict[column] = row[i]
+                # Safely access row elements
+                try:
+                    value = row[i]
+                    row_dict[column] = value
+                except (IndexError, TypeError):
+                    row_dict[column] = None
             result.append(row_dict)
     else:
         result = []

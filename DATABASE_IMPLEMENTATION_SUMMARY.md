@@ -99,6 +99,15 @@ python test_db_connection.py
 ### 4. Run Application
 The application will automatically use the configured database.
 
+## Testing
+
+### Manual Testing
+
+To manually test the database connection:
+
+1. Run the application and verify database operations work correctly
+2. Check the database file directly with a database browser tool
+
 ## Migration
 
 The existing [migrate_to_db.py](file:///d:/hello/new%20code/face%20attendence/migrate_to_db.py) script works with the new database module and can be used to migrate data between different database types.

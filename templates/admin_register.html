@@ -52,7 +52,7 @@
                         <label class="mb-3">Face Image</label>
                         <div class="row align-items-center">
                             <div class="col-md-6 mb-3 mb-md-0">
-                                <button type="button" class="btn btn-outline-secondary btn-block mb-3" data-toggle="modal" data-target="#cameraModal">
+                                <button type="button" class="btn btn-outline-secondary btn-block mb-3" id="openCameraBtn">
                                     <i class="fas fa-camera mr-2"></i> Capture with Camera
                                 </button>
                                 <div class="custom-file">
@@ -94,11 +94,11 @@
 </div>
 
 <!-- Camera Modal -->
-<div class="modal fade" id="cameraModal" tabindex="-1" role="dialog">
+<div class="modal fade" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="cameraModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-camera-retro mr-2"></i> Capture Photo</h5>
+                <h5 class="modal-title" id="cameraModalLabel"><i class="fas fa-camera-retro mr-2"></i> Capture Photo</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -108,8 +108,11 @@
                     <label for="camera-select">Select Camera:</label>
                     <select id="camera-select" class="form-control"></select>
                 </div>
-                <video id="video" width="640" height="480" autoplay playsinline style="border-radius: 8px; background-color: #000;"></video>
-                <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+                <video id="video" width="100%" height="auto" autoplay playsinline style="border-radius: 8px; background-color: #000;"></video>
+                <canvas id="canvas" style="display:none;"></canvas>
+                <div id="camera-error" class="alert alert-danger mt-3" style="display: none;">
+                    <strong>Error:</strong> <span id="error-message"></span>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -167,6 +170,13 @@
         padding: 0.2rem 0.4rem;
         width: auto;
     }
+    
+    /* Camera video styling */
+    #video {
+        max-width: 100%;
+        height: auto;
+        max-height: 70vh;
+    }
 </style>
 <script>
     (function() {
@@ -179,61 +189,118 @@
         const preview = document.getElementById('preview');
         const previewPlaceholder = document.getElementById('preview-placeholder');
         const cameraSelect = document.getElementById('camera-select');
+        const openCameraBtn = document.getElementById('openCameraBtn');
+        const cameraError = document.getElementById('camera-error');
+        const errorMessage = document.getElementById('error-message');
         let currentStream;
+
+        // Function to show error messages
+        function showError(msg) {
+            errorMessage.textContent = msg;
+            cameraError.style.display = 'block';
+        }
+
+        // Function to hide error messages
+        function hideError() {
+            cameraError.style.display = 'none';
+        }
 
         async function getCameras() {
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const videoDevices = devices.filter(device => device.kind === 'videoinput');
                 cameraSelect.innerHTML = '';
+                
+                if (videoDevices.length === 0) {
+                    showError('No cameras found. Please connect a camera and refresh the page.');
+                    return;
+                }
+                
                 videoDevices.forEach((device, index) => {
                     const option = document.createElement('option');
                     option.value = device.deviceId;
                     option.text = device.label || `Camera ${index + 1}`;
                     cameraSelect.appendChild(option);
                 });
+                
+                hideError();
             } catch (err) {
                 console.error("Error enumerating devices: ", err);
+                showError('Failed to access camera devices. Please check your browser permissions.');
             }
         }
 
         async function startCamera(deviceId) {
+            // Stop any existing stream
             if (currentStream) {
                 currentStream.getTracks().forEach(track => track.stop());
             }
+            
             const constraints = {
-                video: { deviceId: deviceId ? { exact: deviceId } : undefined, width: { ideal: 1280 }, height: { ideal: 720 } }
+                video: { 
+                    deviceId: deviceId ? { exact: deviceId } : undefined, 
+                    width: { ideal: 1280 }, 
+                    height: { ideal: 720 } 
+                }
             };
+            
             try {
+                hideError();
                 currentStream = await navigator.mediaDevices.getUserMedia(constraints);
                 video.srcObject = currentStream;
             } catch (err) {
                 console.error("Error accessing camera: ", err);
-                alert("Could not access the camera. Please ensure you have given permission and the camera is not in use by another app.");
+                let errorMsg = 'Could not access the camera. ';
+                
+                if (err.name === 'NotAllowedError') {
+                    errorMsg += 'Please ensure you have given permission to access the camera.';
+                } else if (err.name === 'NotFoundError') {
+                    errorMsg += 'No camera was found. Please connect a camera.';
+                } else if (err.name === 'NotReadableError') {
+                    errorMsg += 'Camera is being used by another application.';
+                } else {
+                    errorMsg += 'Please ensure you have given permission and the camera is not in use by another app.';
+                }
+                
+                showError(errorMsg);
             }
         }
 
+        // Open camera modal when button is clicked
+        openCameraBtn.addEventListener('click', async function() {
+            $('#cameraModal').modal('show');
+        });
+
+        // When modal is shown, initialize camera
         $('#cameraModal').on('shown.bs.modal', async function () {
             await getCameras();
-            if (cameraSelect.value) {
+            if (cameraSelect.options.length > 0) {
                 startCamera(cameraSelect.value);
             }
         });
 
+        // When modal is hidden, stop camera
         $('#cameraModal').on('hidden.bs.modal', function () {
             if (currentStream) {
                 currentStream.getTracks().forEach(track => track.stop());
             }
+            hideError();
         });
 
+        // Change camera when selection changes
         cameraSelect.addEventListener('change', () => {
             startCamera(cameraSelect.value);
         });
 
+        // Capture photo
         snap.addEventListener('click', function() {
+            // Set canvas dimensions to match video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
             const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, 640, 480);
-            const dataUrl = canvas.toDataURL('image/jpeg');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
             imageDataInput.value = dataUrl;
             preview.src = dataUrl;
             preview.style.display = 'block';
@@ -243,6 +310,7 @@
             $('#cameraModal').modal('hide');
         });
 
+        // Handle file input change
         fileInput.addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
                 const file = e.target.files[0];
@@ -258,6 +326,7 @@
             }
         });
 
+        // Form validation
         document.getElementById('register-form').addEventListener('submit', function(e) {
             if (!imageDataInput.value && !fileInput.files[0]) {
                 e.preventDefault();
