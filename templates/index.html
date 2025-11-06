@@ -1,0 +1,68 @@
+
+{% extends 'layout.html' %}
+
+{% block title %}Attendance Records{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-list-alt"></i> Attendance Records</span>
+            <div class="col-md-4">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search records...">
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="attendanceTable">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in attendance %}
+                            <tr>
+                                <td>{{ row.student_id }}</td>
+                                <td>{{ row.name }}</td>
+                                <td>{{ row.date }}</td>
+                                <td>{{ row.time }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">No attendance records found.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        let filter = this.value.toUpperCase();
+        let table = document.getElementById('attendanceTable');
+        let tr = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < tr.length; i++) { // Start from 1 to skip the header row
+            let row = tr[i];
+            let cells = row.getElementsByTagName('td');
+            let textValue = '';
+            for (let j = 0; j < cells.length; j++) {
+                textValue += cells[j].textContent || cells[j].innerText;
+            }
+
+            if (textValue.toUpperCase().indexOf(filter) > -1) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    });
+</script>
+{% endblock %}
