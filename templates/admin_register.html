@@ -1,13 +1,12 @@
+{% extends 'admin_layout.html' %}
 
-{% extends 'layout.html' %}
-
-{% block title %}Register New Student{% endblock %}
+{% block title %}Register New Student - Admin Panel{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
+        <div class="card admin-card">
+            <div class="card-header bg-primary text-white">
                 <h5 class="mb-0"><i class="fas fa-user-plus mr-2"></i> Register New Student</h5>
             </div>
             <div class="card-body">
@@ -76,7 +75,18 @@
 
                     <hr class="my-4">
 
-                    <button type="submit" class="btn btn-primary btn-lg btn-block"><i class="fas fa-plus-circle mr-2"></i> Register Student</button>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-lg btn-block">
+                                <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="submit" class="btn admin-btn text-white btn-lg btn-block">
+                                <i class="fas fa-plus-circle mr-2"></i> Register Student
+                            </button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -86,10 +96,10 @@
 <!-- Camera Modal -->
 <div class="modal fade" id="cameraModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content" style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
-            <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+        <div class="modal-content">
+            <div class="modal-header">
                 <h5 class="modal-title"><i class="fas fa-camera-retro mr-2"></i> Capture Photo</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: var(--primary-text);">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -101,7 +111,7 @@
                 <video id="video" width="640" height="480" autoplay playsinline style="border-radius: 8px; background-color: #000;"></video>
                 <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
             </div>
-            <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
+            <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="button" id="snap" class="btn btn-primary"><i class="fas fa-camera"></i> Snap Photo</button>
             </div>
@@ -142,8 +152,8 @@
         top: -1.1rem;
         left: .8rem;
         font-size: 0.8rem;
-        color: var(--accent);
-        background: var(--card-bg);
+        color: #667eea;
+        background: white;
         padding: 0.2rem 0.4rem;
         width: auto;
     }
@@ -152,19 +162,10 @@
         top: -1.1rem;
         left: .8rem;
         font-size: 0.8rem;
-        color: var(--accent);
-        background: var(--card-bg);
+        color: #667eea;
+        background: white;
         padding: 0.2rem 0.4rem;
         width: auto;
-    }
-    .custom-file-label {
-        background-color: var(--secondary-bg);
-        border-color: var(--border-color);
-        color: var(--secondary-text);
-    }
-    .custom-file-label::after {
-        background-color: var(--secondary-bg);
-        color: var(--primary-text);
     }
 </style>
 <script>

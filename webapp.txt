@@ -1,0 +1,13 @@
+for admin pannel = http://127.0.0.1:5000/admin/login
+
+id=admin1
+password=admin1
+
+
+for teacher pannel = http://127.0.0.1:5000/login
+
+id=admin
+password=admin
+
+
+for student pannel = http://127.0.0.1:5000/student/login

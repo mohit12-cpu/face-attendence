@@ -40,6 +40,17 @@ def create_tables():
                 FOREIGN KEY (student_id) REFERENCES students (id) ON DELETE CASCADE
             )
         ''')
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS admins (
+                id TEXT PRIMARY KEY,
+                password TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        # Insert default admin if not exists
+        conn.execute('''
+            INSERT OR IGNORE INTO admins (id, password) VALUES ('admin1', 'admin1')
+        ''')
     conn.close()
 
 def get_all_students():
@@ -65,6 +76,19 @@ def get_attendance():
         JOIN students s ON a.student_id = s.id
         ORDER BY a.date DESC, a.time DESC
     ''').fetchall()
+    conn.close()
+    return [dict(row) for row in attendance]
+
+def get_student_attendance(student_id):
+    """Retrieve attendance records for a specific student."""
+    conn = get_db_connection()
+    attendance = conn.execute('''
+        SELECT a.id, s.id as student_id, s.name, a.date, a.time
+        FROM attendance a
+        JOIN students s ON a.student_id = s.id
+        WHERE s.id = ?
+        ORDER BY a.date DESC, a.time DESC
+    ''', (student_id,)).fetchall()
     conn.close()
     return [dict(row) for row in attendance]
 
@@ -146,6 +170,23 @@ def get_next_student_id():
         if sid not in existing_ids:
             return sid
     raise RuntimeError("Unable to generate a unique student ID.")
+
+def verify_admin(admin_id, password):
+    """Verify admin credentials."""
+    conn = get_db_connection()
+    admin = conn.execute("SELECT * FROM admins WHERE id = ? AND password = ?", (admin_id, password)).fetchone()
+    conn.close()
+    return admin is not None
+
+def update_student(student_id, name, faculty, dob, email, address):
+    """Update an existing student's information."""
+    conn = get_db_connection()
+    with conn:
+        conn.execute(
+            "UPDATE students SET name = ?, faculty = ?, dob = ?, email = ?, address = ? WHERE id = ?",
+            (name, faculty, dob, email, address, student_id)
+        )
+    conn.close()
 
 # Initialize the database and tables
 create_tables()

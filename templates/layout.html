@@ -7,6 +7,7 @@
     <title>{% block title %}CognAttendance Web{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -18,21 +19,27 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
-                        <a class="nav-link" href="{{ url_for('index') }}"><i class="fas fa-list-alt"></i> Attendance</a>
-                    </li>
-                    <li class="nav-item {% if request.endpoint == 'list_students' %}active{% endif %}">
-                        <a class="nav-link" href="{{ url_for('list_students') }}"><i class="fas fa-users"></i> Students</a>
-                    </li>
-                    <li class="nav-item {% if request.endpoint == 'register' %}active{% endif %}">
-                        <a class="nav-link" href="{{ url_for('register') }}"><i class="fas fa-user-plus"></i> Register</a>
-                    </li>
+                    {% if session.logged_in %}
+                        <li class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
+                            <a class="nav-link" href="{{ url_for('index') }}"><i class="fas fa-list-alt"></i> Attendance</a>
+                        </li>
+                        <li class="nav-item {% if request.endpoint == 'list_students' or request.endpoint == 'student_details' %}active{% endif %}">
+                            <a class="nav-link" href="{{ url_for('list_students') }}"><i class="fas fa-users"></i> Students</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item {% if request.endpoint == 'login' %}active{% endif %}">
+                            <a class="nav-link" href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
 
-    <main role="main" class="container mt-4">
+    <main role="main" class="container my-5">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -54,9 +61,12 @@
         </div>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+
     {% block scripts %}{% endblock %}
 </body>
 </html>

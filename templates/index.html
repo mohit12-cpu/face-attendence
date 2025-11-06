@@ -1,68 +1,63 @@
-
 {% extends 'layout.html' %}
 
-{% block title %}Attendance Records{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <span><i class="fas fa-list-alt"></i> Attendance Records</span>
-            <div class="col-md-4">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search records...">
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0" id="attendanceTable">
-                    <thead>
-                        <tr>
-                            <th>Student ID</th>
-                            <th>Name</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in attendance %}
-                            <tr>
-                                <td>{{ row.student_id }}</td>
-                                <td>{{ row.name }}</td>
-                                <td>{{ row.date }}</td>
-                                <td>{{ row.time }}</td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="4" class="text-center text-muted">No attendance records found.</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Dashboard</h1>
+</div>
+
+<!-- Stat Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">{{ total_students }}</h5>
+                        <p class="card-text">Total Students</p>
+                    </div>
+                    <i class="fas fa-users fa-3x"></i>
+                </div>
             </div>
         </div>
     </div>
-{% endblock %}
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">{{ today_records }}</h5>
+                        <p class="card-text">Attendance Today</p>
+                    </div>
+                    <i class="fas fa-calendar-check fa-3x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">{{ total_records }}</h5>
+                        <p class="card-text">Total Records</p>
+                    </div>
+                    <i class="fas fa-clipboard-list fa-3x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-{% block scripts %}
-<script>
-    document.getElementById('searchInput').addEventListener('keyup', function() {
-        let filter = this.value.toUpperCase();
-        let table = document.getElementById('attendanceTable');
-        let tr = table.getElementsByTagName('tr');
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-history mr-2"></i> Recent Attendance</h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted">Showing the 10 most recent attendance records. For a full, searchable log, please visit the <a href="{{ url_for('list_attendance') }}">Attendance Page</a>.</p>
+        {% include '_attendance_table.html' %}
+    </div>
+</div>
 
-        for (let i = 1; i < tr.length; i++) { // Start from 1 to skip the header row
-            let row = tr[i];
-            let cells = row.getElementsByTagName('td');
-            let textValue = '';
-            for (let j = 0; j < cells.length; j++) {
-                textValue += cells[j].textContent || cells[j].innerText;
-            }
-
-            if (textValue.toUpperCase().indexOf(filter) > -1) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        }
-    });
-</script>
 {% endblock %}

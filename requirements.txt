@@ -1,0 +1,8 @@
+flask
+waitress
+opencv-python
+face_recognition
+pillow
+mysql-connector-python
+psycopg2-binary
+sqlalchemy

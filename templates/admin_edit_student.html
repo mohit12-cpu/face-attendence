@@ -1,27 +1,26 @@
+{% extends 'admin_layout.html' %}
 
-{% extends 'layout.html' %}
-
-{% block title %}Register New Student{% endblock %}
+{% block title %}Edit Student - Admin Panel{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-user-plus mr-2"></i> Register New Student</h5>
+        <div class="card admin-card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-user-edit mr-2"></i> Edit Student: {{ student.name }}</h5>
             </div>
             <div class="card-body">
-                <form id="register-form" method="post" enctype="multipart/form-data" novalidate>
+                <form id="edit-form" method="post" enctype="multipart/form-data" novalidate>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <div class="form-label-group">
-                                <input type="text" id="name" name="name" class="form-control" placeholder="Name" required>
+                                <input type="text" id="name" name="name" class="form-control" placeholder="Name" value="{{ student.name }}" required>
                                 <label for="name">Name</label>
                             </div>
                         </div>
                         <div class="form-group col-md-6">
                             <div class="form-label-group">
-                                <input type="text" id="faculty" name="faculty" class="form-control" placeholder="Faculty">
+                                <input type="text" id="faculty" name="faculty" class="form-control" placeholder="Faculty" value="{{ student.faculty or '' }}">
                                 <label for="faculty">Faculty</label>
                             </div>
                         </div>
@@ -29,43 +28,55 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                              <div class="form-label-group">
-                                <input type="date" id="dob" name="dob" class="form-control" placeholder="Date of Birth">
+                                <input type="date" id="dob" name="dob" class="form-control" placeholder="Date of Birth" value="{{ student.dob or '' }}">
                                 <label for="dob">Date of Birth</label>
                             </div>
                         </div>
                         <div class="form-group col-md-6">
                             <div class="form-label-group">
-                                <input type="email" id="email" name="email" class="form-control" placeholder="Email">
+                                <input type="email" id="email" name="email" class="form-control" placeholder="Email" value="{{ student.email or '' }}">
                                 <label for="email">Email</label>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="form-label-group">
-                            <input type="text" id="address" name="address" class="form-control" placeholder="Address">
+                            <input type="text" id="address" name="address" class="form-control" placeholder="Address" value="{{ student.address or '' }}">
                             <label for="address">Address</label>
                         </div>
                     </div>
 
                     <hr class="my-4">
 
+                    <!-- Current Photo Display -->
                     <div class="form-group">
-                        <label class="mb-3">Face Image</label>
+                        <label class="mb-3">Current Photo</label>
+                        <div class="text-center mb-3">
+                            <img src="{{ url_for('known_face_image', filename=student.id + '.jpg') }}" 
+                                 alt="{{ student.name }}" class="img-thumbnail" 
+                                 style="max-height: 200px; max-width: 200px;"
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRTVFN0VCIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjOUM5Qzk3Ij5ObyBJbWFnZTwvdGV4dD4KPHN2Zz4K'">
+                            <p class="text-muted mt-2">Student ID: <span class="badge badge-primary">{{ student.id }}</span></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="mb-3">Update Face Image (Optional)</label>
                         <div class="row align-items-center">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <button type="button" class="btn btn-outline-secondary btn-block mb-3" data-toggle="modal" data-target="#cameraModal">
-                                    <i class="fas fa-camera mr-2"></i> Capture with Camera
+                                    <i class="fas fa-camera mr-2"></i> Capture New Photo
                                 </button>
                                 <div class="custom-file">
                                     <input type="file" class="custom-file-input" id="face_image_file" name="face_image_file" accept="image/*">
-                                    <label class="custom-file-label" for="face_image_file">Or choose a file...</label>
+                                    <label class="custom-file-label" for="face_image_file">Or choose a new file...</label>
                                 </div>
                             </div>
                             <div class="col-md-6 text-center">
                                 <img id="preview" class="img-fluid" style="max-height: 180px; border-radius: 8px; display: none; border: 2px solid var(--border-color);"/>
                                 <div id="preview-placeholder" class="text-muted">
                                     <i class="fas fa-image fa-3x"></i>
-                                    <p>Image Preview</p>
+                                    <p>New Image Preview</p>
                                 </div>
                             </div>
                         </div>
@@ -76,7 +87,18 @@
 
                     <hr class="my-4">
 
-                    <button type="submit" class="btn btn-primary btn-lg btn-block"><i class="fas fa-plus-circle mr-2"></i> Register Student</button>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-lg btn-block">
+                                <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-warning btn-lg btn-block">
+                                <i class="fas fa-save mr-2"></i> Update Student
+                            </button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -86,10 +108,10 @@
 <!-- Camera Modal -->
 <div class="modal fade" id="cameraModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content" style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
-            <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
-                <h5 class="modal-title"><i class="fas fa-camera-retro mr-2"></i> Capture Photo</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: var(--primary-text);">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-camera-retro mr-2"></i> Capture New Photo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -101,7 +123,7 @@
                 <video id="video" width="640" height="480" autoplay playsinline style="border-radius: 8px; background-color: #000;"></video>
                 <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
             </div>
-            <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
+            <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="button" id="snap" class="btn btn-primary"><i class="fas fa-camera"></i> Snap Photo</button>
             </div>
@@ -124,47 +146,22 @@
     }
     .form-label-group > label {
         position: absolute;
-        top: 0;
-        left: 0;
-        display: block;
-        width: 100%;
+        top: -1.1rem;
+        left: .8rem;
+        font-size: 0.8rem;
+        color: #667eea;
+        background: white;
+        padding: 0.2rem 0.4rem;
+        width: auto;
         margin-bottom: 0;
         line-height: 1.5;
-        color: #a9b3c1;
         border: 1px solid transparent;
         border-radius: .25rem;
         transition: all .1s ease-in-out;
-        padding: 1.2rem 1rem;
         pointer-events: none;
     }
-    .form-label-group input:not(:placeholder-shown) ~ label,
     .form-label-group input:focus ~ label {
-        top: -1.1rem;
-        left: .8rem;
-        font-size: 0.8rem;
-        color: var(--accent);
-        background: var(--card-bg);
-        padding: 0.2rem 0.4rem;
-        width: auto;
-    }
-    /* Fix for date input label which is never empty */
-    .form-label-group input[type="date"] ~ label {
-        top: -1.1rem;
-        left: .8rem;
-        font-size: 0.8rem;
-        color: var(--accent);
-        background: var(--card-bg);
-        padding: 0.2rem 0.4rem;
-        width: auto;
-    }
-    .custom-file-label {
-        background-color: var(--secondary-bg);
-        border-color: var(--border-color);
-        color: var(--secondary-text);
-    }
-    .custom-file-label::after {
-        background-color: var(--secondary-bg);
-        color: var(--primary-text);
+        color: #667eea;
     }
 </style>
 <script>
@@ -238,7 +235,7 @@
             preview.style.display = 'block';
             previewPlaceholder.style.display = 'none';
             fileInput.value = ''; // Clear file input
-            $('.custom-file-label').text('Or choose a file...');
+            $('.custom-file-label').text('Or choose a new file...');
             $('#cameraModal').modal('hide');
         });
 
@@ -254,13 +251,6 @@
                 }
                 reader.readAsDataURL(file);
                 document.querySelector('.custom-file-label').innerText = file.name;
-            }
-        });
-
-        document.getElementById('register-form').addEventListener('submit', function(e) {
-            if (!imageDataInput.value && !fileInput.files[0]) {
-                e.preventDefault();
-                alert('Please capture a photo or select an image file.');
             }
         });
     })();

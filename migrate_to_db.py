@@ -1,7 +1,12 @@
 
 import csv
 import os
-from database import add_student, add_attendance_record, get_all_students, SCRIPT_DIR, create_tables, DB_FILE
+try:
+    # Try to use the new SQL database module first
+    from database_sql import add_student, add_attendance_record, get_all_students, SCRIPT_DIR, create_tables, DB_FILE
+except ImportError:
+    # Fallback to the original SQLite database module
+    from database import add_student, add_attendance_record, get_all_students, SCRIPT_DIR, create_tables, DB_FILE
 
 # Use absolute paths for CSV files
 STUDENTS_CSV = os.path.join(SCRIPT_DIR, "students.csv")
