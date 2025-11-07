@@ -13,19 +13,22 @@ except ImportError:
 MYSQL_AVAILABLE = False
 POSTGRESQL_AVAILABLE = False
 
+_mysql_available = False
+_postgresql_available = False
+
 try:
     import mysql.connector  # type: ignore
-    MYSQL_AVAILABLE = True
+    _mysql_available = True
 except ImportError:
     mysql = None
-    MYSQL_AVAILABLE = False
+    _mysql_available = False
 
 try:
     import psycopg2
-    POSTGRESQL_AVAILABLE = True
+    _postgresql_available = True
 except ImportError:
     psycopg2 = None
-    POSTGRESQL_AVAILABLE = False
+    _postgresql_available = False
 
 # Database configuration from environment variables
 DB_TYPE = os.environ.get('DB_TYPE', 'sqlite')  # 'mysql', 'postgresql', or 'sqlite'
@@ -36,11 +39,11 @@ DB_USER = os.environ.get('DB_USER', 'root')
 DB_PASSWORD = os.environ.get('DB_PASSWORD', '')
 
 # Print debug information
-print(f"DB_TYPE: {DB_TYPE}")
-print(f"DB_HOST: {DB_HOST}")
-print(f"DB_PORT: {DB_PORT}")
-print(f"DB_NAME: {DB_NAME}")
-print(f"DB_USER: {DB_USER}")
+# print(f"DB_TYPE: {DB_TYPE}")
+# print(f"DB_HOST: {DB_HOST}")
+# print(f"DB_PORT: {DB_PORT}")
+# print(f"DB_NAME: {DB_NAME}")
+# print(f"DB_USER: {DB_USER}")
 
 # SQLite fallback (existing functionality)
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -204,7 +207,10 @@ def get_all_students():
             for i, column in enumerate(columns):
                 # Safely access row elements
                 try:
-                    value = row[i]
+                    if hasattr(row, '__getitem__'):
+                        value = list(row)[i]
+                    else:
+                        value = list(row)[i]
                     row_dict[column] = value
                 except (IndexError, TypeError):
                     row_dict[column] = None
@@ -232,7 +238,10 @@ def get_student_by_id(student_id):
             columns = [desc[0] for desc in cursor.description]
             result = {}
             for i, column in enumerate(columns):
-                result[column] = row[i]
+                if hasattr(row, '__getitem__'):
+                    result[column] = list(row)[i]
+                else:
+                    result[column] = list(row)[i]
         else:
             result = None
     else:
@@ -272,7 +281,10 @@ def get_attendance():
             for i, column in enumerate(columns):
                 # Safely access row elements
                 try:
-                    value = row[i]
+                    if hasattr(row, '__getitem__'):
+                        value = list(row)[i]
+                    else:
+                        value = list(row)[i]
                     row_dict[column] = value
                 except (IndexError, TypeError):
                     row_dict[column] = None
@@ -328,7 +340,10 @@ def get_student_attendance(student_id):
                 for i, column in enumerate(columns):
                     # Safely access row elements
                     try:
-                        value = row[i]
+                        if hasattr(row, '__getitem__'):
+                            value = list(row)[i]
+                        else:
+                            value = list(row)[i]
                         row_dict[column] = value
                     except (IndexError, TypeError):
                         row_dict[column] = None
@@ -412,14 +427,24 @@ def mark_attendance_db(student_id):
                 date_val = None
                 time_val = None
                 try:
-                    date_val = last_entry[0]
-                    time_val = last_entry[1]
+                    if hasattr(last_entry, '__getitem__'):
+                        date_val = list(last_entry)[0]
+                        time_val = list(last_entry)[1]
+                    else:
+                        entry_list = list(last_entry)
+                        date_val = entry_list[0]
+                        time_val = entry_list[1]
                 except (IndexError, TypeError):
                     # If we can't access by index, try other methods
                     if hasattr(last_entry, '__getitem__'):
                         try:
-                            date_val = last_entry.__getitem__(0)
-                            time_val = last_entry.__getitem__(1)
+                            if hasattr(last_entry, '__getitem__'):
+                                date_val = list(last_entry)[0]
+                                time_val = list(last_entry)[1]
+                            else:
+                                entry_list = list(last_entry)
+                                date_val = entry_list[0]
+                                time_val = entry_list[1]
                         except (IndexError, TypeError):
                             pass
                 
@@ -496,7 +521,10 @@ def get_next_student_id():
         if row is not None:
             # Safely access the first element
             try:
-                student_id = row[0]
+                if hasattr(row, '__getitem__'):
+                    student_id = list(row)[0]
+                else:
+                    student_id = list(row)[0]
                 existing_ids.add(student_id)
             except (IndexError, TypeError):
                 pass  # Skip invalid rows
