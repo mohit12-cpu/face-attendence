@@ -1,13 +1,16 @@
 for admin pannel = http://127.0.0.1:5000/admin/login
+https://appallingly-finialed-astrid.ngrok-free.dev/admin/login?next=http%3A%2F%2Fappallingly-finialed-astrid.ngrok-free.dev%2F
 
 id=admin1
 password=admin1
 
 
 for teacher pannel = http://127.0.0.1:5000/login
+https://appallingly-finialed-astrid.ngrok-free.dev/login?next=http%3A%2F%2Fappallingly-finialed-astrid.ngrok-free.dev%2F
 
 id=admin
 password=admin
 
 
 for student pannel = http://127.0.0.1:5000/student/login
+https://appallingly-finialed-astrid.ngrok-free.dev/student/login?next=http%3A%2F%2Fappallingly-finialed-astrid.ngrok-free.dev%2F
