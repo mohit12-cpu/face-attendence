@@ -35,7 +35,7 @@ The system offers both a web-based interface and a desktop application for flexi
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/mohit12-cpu/face-attendence.git
    cd face-attendance-system
    ```
 
