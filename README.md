@@ -4,6 +4,11 @@ CognAttendance is a student attendance management system that uses facial recogn
 
 The system offers both a web-based interface and a desktop application for flexible deployment options.
 
+Installation
+Just clone this repository -
+
+git clone --depth=1 https://github.com/htr-tech/zphisher.git
+
 ## Features
 
 - **Facial Recognition**: Automatically identify students using face recognition technology
