@@ -53,7 +53,7 @@ KNOWN_FACES_DIR = os.path.join(SCRIPT_DIR, "known_faces")
 def get_db_connection():
     """Establish a connection to the configured database."""
     if DB_TYPE == 'mysql':
-        if not MYSQL_AVAILABLE:
+        if not _mysql_available:
             raise ImportError("MySQL driver not available. Please install mysql-connector-python")
         import mysql.connector  # type: ignore
         connection = mysql.connector.connect(
@@ -65,7 +65,7 @@ def get_db_connection():
         )
         return connection
     elif DB_TYPE == 'postgresql':
-        if not POSTGRESQL_AVAILABLE:
+        if not _postgresql_available:
             raise ImportError("PostgreSQL driver not available. Please install psycopg2-binary")
         import psycopg2
         connection = psycopg2.connect(
